@@ -315,7 +315,7 @@ function prompt_end {
   _omb_theme_agnoster_text_effect reset
   local -a reset=(${REPLY:+"$REPLY"})
   _omb_theme_agnoster_ansi 'reset[@]'
-  PR="$PR $REPLY"
+  PR="$PR $REPLY\n❯ "
   CURRENT_BG=''
 }
 
@@ -374,12 +374,23 @@ function prompt_condaenv {
 ### Prompt components
 # Each component will draw itself, and hide itself if no information needs to be shown
 
+_short_host() {
+    if [[ "$(hostname)" == slurm-bar-login-* ]]; then
+       echo "bar"
+    elif [[ "$(hostname)" == slurm-login-* ]]; then
+       echo "rno"
+    else
+        echo $(hostname)
+    fi
+}
+
+
 # Context: user@hostname (who am I and where am I)
 function prompt_context {
   local user=$(whoami)
 
   if [[ $user != $DEFAULT_USER || -n $SSH_CLIENT ]]; then
-    prompt_segment black default "$user@\h"
+    prompt_segment black default "$user@$(echo '$(_short_host)')"
   fi
 }
 
